@@ -29,6 +29,37 @@ function main() {
 
         // console.log("all vertex", objects.flatMap(obj => obj.getPosition()))
 
+        // TODO: ganti jadi euclidean distance
+        let closestPoint = objects.find(obj => obj.getPosition().find(pos => Math.abs(event.clientX-pos[0])<15 || Math.abs(event.clientY-pos[1])<15))
+
+
+        let objectIdx = objects.findIndex(x => x === closestPoint)
+        console.log("objectIdx", objectIdx)
+        if (objectIdx !== -1) {
+            setupSlider("#prop1", {
+                name: "x",
+                slideFunction: objects[objectIdx].updatePositionX(),
+                max: gl.canvas.width,
+                value: objects[objectIdx].getX()
+            });
+            setupSlider("#prop2", {
+                name: "y",
+                slideFunction: objects[objectIdx].updatePositionY(),
+                max: gl.canvas.height,
+                value: objects[objectIdx].getY()
+            });
+        } else {
+            let parent = document.querySelector("#prop1");
+            parent.innerHTML = ""
+            let parent2 = document.querySelector("#prop2");
+            parent2.innerHTML = ""
+        }
+        
+
+        console.log("titik terdekat\n", closestPoint
+            
+        )
+
         drawScene()
     })
 
@@ -128,28 +159,28 @@ function main() {
 
     let isOne = true
 
-    let changeObject = document.querySelector("#changeObject")
-    changeObject.addEventListener("click", () => {
-        let objNum = 0;
-        if (isOne == true) {
-            isOne = !isOne
-        } else {
-            objNum = 1
-            isOne = !isOne
-        }
-        setupSlider("#prop1", {
-            name: "x",
-            slideFunction: objects[objNum].updatePositionX(),
-            max: gl.canvas.width,
-            value: objects[objNum].getX()
-        });
-        setupSlider("#prop2", {
-            name: "y",
-            slideFunction: objects[objNum].updatePositionY(),
-            max: gl.canvas.height,
-            value: objects[objNum].getY()
-        });
-    })
+    // let changeObject = document.querySelector("#changeObject")
+    // changeObject.addEventListener("click", () => {
+    //     let objNum = 0;
+    //     if (isOne == true) {
+    //         isOne = !isOne
+    //     } else {
+    //         objNum = 1
+    //         isOne = !isOne
+    //     }
+    //     setupSlider("#prop1", {
+    //         name: "x",
+    //         slideFunction: objects[objNum].updatePositionX(),
+    //         max: gl.canvas.width,
+    //         value: objects[objNum].getX()
+    //     });
+    //     setupSlider("#prop2", {
+    //         name: "y",
+    //         slideFunction: objects[objNum].updatePositionY(),
+    //         max: gl.canvas.height,
+    //         value: objects[objNum].getY()
+    //     });
+    // })
 
     function drawScene() {
         resizeCanvasToDisplaySize(gl.canvas);
@@ -170,10 +201,12 @@ function main() {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         let objectsPosition = objects.flatMap(obj => obj.getPosition())
+        let positionx = objectsPosition.flatMap(obj => obj)
+        // console.log("objectsposition", positionx)
 
         gl.bufferData(
             gl.ARRAY_BUFFER,
-            new Float32Array(objectsPosition),
+            new Float32Array(positionx),
             gl.STATIC_DRAW
         );
         // setRectangle(gl, translation[0], translation[1], 40, 40);
@@ -207,12 +240,13 @@ function main() {
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
-        var count = objectsPosition.length/2;
+        // FOR TWO OBJECT
+        var count = positionx.length/2;
         gl.drawArrays(primitiveType, offset, count);
 
         // console.log("object position length\n", objectsPosition.length, "objects length\n", objects.length)
 
-        window.requestAnimationFrame(drawScene);
+        // window.requestAnimationFrame(drawScene);
     }
 
     
