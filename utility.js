@@ -32,8 +32,6 @@ function createProgram(gl, vertexShader, fragmentShader) {
     gl.deleteProgram(program);
 }
 
-
-
 // Fill the buffer with the values that define a rectangle.
 function setRectangle(gl, x, y, width, height) {
     var x1 = x;
@@ -47,6 +45,23 @@ function setRectangle(gl, x, y, width, height) {
     );
 }
 
+function resizeCanvasToDisplaySize(canvas) {
+    const displayWidth = canvas.clientWidth;
+    const displayHeight = canvas.clientHeight;
 
+    const needResize =
+        canvas.width !== displayWidth || canvas.height !== displayHeight;
 
-export { createShader, createProgram }
+    if (needResize) {
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+    }
+
+    return needResize;
+}
+
+function pixelToClip(point, canvasSize) {
+    return (point / canvasSize) * 2 - 1;
+}
+
+export { createShader, createProgram, resizeCanvasToDisplaySize, pixelToClip };

@@ -8,51 +8,41 @@
         <link rel="stylesheet" type="text/css" href="style.css" />
     </head>
     <body>
-        <button id="changeObject" type="button">Change object</button>
-        <canvas id="canvas"></canvas>
-        <div id="properties">
-            <p>properties</p>
-            <div class="prop" id="prop1"></div>
-            <div class="prop" id="prop2"></div></div>
-            
+        <div class="container">
+            <canvas id="canvas"></canvas>
+            <div id="properties">
+                <p>properties</p>
+                <div class="prop" id="prop1"></div>
+                <div class="prop" id="prop2"></div>
+            </div>
+            <div id="info">
+                <p>info</p>
+                <button tyle="button">rectangle</button>
+            </div>
+        </div>
     </body>
     <script src="https://greggman.github.io/webgl-lint/webgl-lint.js"></script>
-    <!-- <script id="vertex-shader-2d" type="notjs">
-        // receive data from a buffer
-        attribute vec4 a_position;
+    <script id="vertex-shader-2d" type="notjs">
+        attribute vec3 a_position; // x and y
+
+        varying vec4 fColor;
+        attribute vec3 vColor;
 
         void main() {
-            // load the position of the current vertex
-            gl_Position = a_position;
+
+          // flip clip space y coordinate, move bottom left to top left
+          gl_Position = vec4(a_position,1);
+          fColor = vec4(vColor, 1.0);
         }
-    </script> -->
-    <script id="vertex-shader-2d" type="notjs">
-        attribute vec2 a_position;
-       
-        uniform vec2 u_resolution;
-       
-        void main() {
-          // convert the position from pixels to 0.0 to 1.0
-          vec2 zeroToOne = a_position / u_resolution;
-       
-          // convert from 0->1 to 0->2
-          vec2 zeroToTwo = zeroToOne * 2.0;
-       
-          // convert from 0->2 to -1->+1 (clip space)
-          vec2 clipSpace = zeroToTwo - 1.0;
-       
-          gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-        }
-       
-      </script>
+    </script>
     <script id="fragment-shader-2d" type="notjs">
         precision mediump float;
 
-        uniform vec4 u_color;
+        varying vec4 fColor;
 
         void main() {
             // load the fragment setting
-            gl_FragColor = u_color;
+            gl_FragColor = fColor;
         }
     </script>
     <script type="module" src="./index.js"></script>
