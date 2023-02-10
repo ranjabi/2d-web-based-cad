@@ -4,6 +4,7 @@ import {
     resizeCanvasToDisplaySize,
 } from "./utility.js";
 import Rectangle from "./rectangleClass.js";
+import Polygon from "./polygon.js";
 
 function main() {
     let objects = [];
@@ -31,7 +32,7 @@ function main() {
         let closestPoint = objects.find(obj => obj.getPosition().find(pos => Math.abs(event.clientX-pos[0])<15 || Math.abs(event.clientY-pos[1])<15))
 
         let objectIdx = objects.findIndex((x) => x === closestPoint);
-
+        
         if (objectIdx !== -1) {
             // if object exist in closest clicked point, display slider
             setupSlider("#prop1", {
@@ -55,7 +56,7 @@ function main() {
             parent2.innerHTML = "";
         }
 
-        // console.log("titik terdekat\n", closestPoint);
+        console.log("titik terdekat\n", closestPoint);
 
         drawScene();
     });
@@ -86,9 +87,14 @@ function main() {
     let kotak = new Rectangle(0.5, 0.5, 0.3, 0.3);
 
     let kotak2 = new Rectangle(0.1, 0.1, 0.3, 0.3);
+    let kotak3 = new Polygon([-0.1, -0.1], [-0.6, -0.3], [-0.5, -0.5], [-0.1, -0.5]);
+    let kotak4 = new Polygon([-0.4, -0.7], [-0.6, -0.5], [-0.8, -0.9], [-0.5, -0.6],  [-0.1,-0.6]);
+
 
     objects.push(kotak);
     objects.push(kotak2);
+    objects.push(kotak3);
+    objects.push(kotak4);
 
     // console.log("objects", objects.length)
 
@@ -107,7 +113,11 @@ function main() {
         gl.useProgram(program);
 
         // turn [[x1,y1],[x2,y2]] into [x1,y1,x2,y2]
-        let objectsPosition = objects.flatMap((obj) => obj.getPosition());
+        let objectsPosition = objects.flatMap((obj) => {
+            // console.log("obj", obj);
+            return obj.getPosition();
+        });
+        // console.log("objectsPosition", objectsPosition);
         let vPosition = objectsPosition.flatMap((obj) => obj);
 
         // turn [r,g,b][r,g,b] to [r,g,b,r,g,b]
@@ -123,7 +133,7 @@ function main() {
             new Float32Array(colorPosition),
             gl.STATIC_DRAW
         );
-
+        
         // COLOR POSITION
         let vColor = gl.getAttribLocation(program, "vColor");
         gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
@@ -155,12 +165,19 @@ function main() {
         gl.enableVertexAttribArray(positionAttributeLocation);
 
         // Draw the rectangle.
-        var primitiveType = gl.TRIANGLES;
-        var offset = 0;
+        // var primitiveType = gl.TRIANGLES;
+        // var offset = 0;
 
-        // FOR TWO OBJECT
-        var count = vPosition.length / 2;
-        gl.drawArrays(primitiveType, offset, count);
+        // // FOR TWO OBJECT
+        // var count = vPosition.length / 2;
+        // gl.drawArrays(primitiveType, offset, count);
+        let offset = 0
+        for (let obj of objects) {
+            let primitiveType = obj.getPrimitiveType();
+            let count = obj.getCount();
+            gl.drawArrays(primitiveType, offset, count);
+            offset += count;
+        }
 
         // console.log("object position length\n", objectsPosition.length, "objects length\n", objects.length)
 

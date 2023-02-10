@@ -7,9 +7,11 @@ export default class Rectangle {
         this.width = width
         this.height = height
     }
-
+    getCount() { //count banyak yang akan di render
+        return 6
+    }
     getPrimitiveType() {
-        return 
+        return 4
     }
 
     getX() {
@@ -28,7 +30,7 @@ export default class Rectangle {
     getPosition() {
         return [[this.x1, this.y1], [this.x2, this.y1], [this.x1, this.y2], [this.x1, this.y2], [this.x2, this.y1], [this.x2, this.y2]]
     }
-
+    
     updatePositionX() {
         let self = this
         return function (event, ui) {

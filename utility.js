@@ -64,4 +64,5 @@ function pixelToClip(point, canvasSize) {
     return (point / canvasSize) * 2 - 1;
 }
 
+
 export { createShader, createProgram, resizeCanvasToDisplaySize, pixelToClip };
