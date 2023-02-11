@@ -4,26 +4,27 @@ import {
     euclideanDistance,
     setupSlider,
     resizeCanvasToDisplaySize,
+    getRandomColor,
 } from "./utility.js";
 import Rectangle from "./rectangle.js";
 import Polygon from "./polygon.js";
 
 window.onload = function init() {
     let objects = [];
+    let newObjectOffset = 20;
+    let onPressMouse = false;
+    let closestObject = null;
 
     let canvas = document.querySelector("#canvas");
+    let squareBtn = document.getElementById("square-btn");
+    let rectangleBtn = document.getElementById("rectangle-btn");
 
     canvas.addEventListener("mousedown", (event) => {
-        console.log(
-            "down",
-            event.clientX,
-            event.clientY,
-            canvas.clientWidth,
-            canvas.clientHeight,
-            canvas.offsetLeft,
-            canvas.offsetTop
-        );
+        onPressMouse = true;
 
+        /**
+         * display closest clicked object properties
+         */
         let closestPoint = objects.find((obj) =>
             obj.getPosition().find((pos) => {
                 let distance = euclideanDistance(
@@ -39,7 +40,7 @@ window.onload = function init() {
         let closestObjectIdx = objects.findIndex((x) => x === closestPoint);
 
         if (closestObjectIdx !== -1) {
-            let closestObject = objects[closestObjectIdx];
+            closestObject = objects[closestObjectIdx];
             let sliderAttr = closestObject.getSliderAttr(canvas);
 
             // setup all object slider attribute
@@ -52,6 +53,46 @@ window.onload = function init() {
         }
 
         drawScene();
+    });
+
+    canvas.addEventListener("mousemove", (event) => {
+        if (onPressMouse) {
+            if (closestObject) {
+                closestObject.updateCoor({newX: event.clientX - canvas.offsetLeft, newY:event.clientY - canvas.offsetTop})
+            }
+        }
+    });
+
+    canvas.addEventListener("mouseup", (event) => {
+        onPressMouse = false;
+        console.log("mouse up");
+    });
+
+    /**
+     * setup for object button generator
+     */
+    squareBtn.addEventListener("click", (event) => {
+        let kotak = new Rectangle(
+            newObjectOffset,
+            newObjectOffset,
+            50,
+            50,
+            getRandomColor(),
+            true
+        );
+        objects.push(kotak);
+        newObjectOffset += 30;
+    });
+    rectangleBtn.addEventListener("click", (event) => {
+        let kotak = new Rectangle(
+            newObjectOffset,
+            newObjectOffset,
+            80,
+            50,
+            getRandomColor()
+        );
+        objects.push(kotak);
+        newObjectOffset += 30;
     });
 
     // WebGLRenderingContext
@@ -74,15 +115,9 @@ window.onload = function init() {
 
     let program = createProgram(gl, vertexShader, fragmentShader);
 
-    // set rectangle
-    let kotak = new Rectangle(20, 20, 100, 100);
-
-    let kotak2 = new Rectangle(300, 300, 100, 100);
     // let kotak3 = new Polygon([10, 10], [20, 30], [40, 40], [10, 40]);
     // let kotak4 = new Polygon([-0.4, -0.7], [-0.6, -0.5], [-0.8, -0.9], [-0.5, -0.6],  [-0.1,-0.6]);
 
-    objects.push(kotak);
-    objects.push(kotak2);
     // objects.push(kotak3);
     // objects.push(kotak4);
 
@@ -120,7 +155,6 @@ window.onload = function init() {
         let flattenVertexPosition = objectsPosition.flatMap((obj) => obj);
 
         // turn [r,g,b][r,g,b] to [r,g,b,r,g,b]
-        // set red color
         let colorPosition = objects.flatMap((obj) => obj.getColor(1, 0, 0));
 
         // COLOR BUFFER
@@ -151,6 +185,7 @@ window.onload = function init() {
             program,
             "a_position"
         );
+
         // attribute properties
         gl.vertexAttribPointer(
             positionAttributeLocation,
@@ -166,6 +201,7 @@ window.onload = function init() {
         for (let obj of objects) {
             let primitiveType = obj.getPrimitiveType();
             let count = obj.getCount();
+            gl.drawArrays(gl.POINTS, offset, count);
             gl.drawArrays(primitiveType, offset, count);
             offset += count;
         }

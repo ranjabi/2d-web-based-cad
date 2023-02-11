@@ -12,6 +12,8 @@
             <canvas id="canvas"></canvas>
             <div id="properties-wrapper">
                 <p>properties</p>
+                <button id="square-btn">persegi</button>
+                <button id="rectangle-btn">persegi panjnag</button>
                 <div id="properties">
                     <div class="prop" id="prop1"></div>
                     <div class="prop" id="prop2"></div>
@@ -38,7 +40,7 @@
         // convert from 0->2 to -1->+1 (clip space)
         vec2 clipSpace = zeroToTwo - 1.0;
         gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-          gl_PointSize = 10.0;
+          gl_PointSize = 8.0;
           fColor = vec4(vColor, 1.0);
         }
     </script>
