@@ -10,28 +10,35 @@
     <body>
         <div class="container">
             <canvas id="canvas"></canvas>
-            <div id="properties">
+            <div id="properties-wrapper">
                 <p>properties</p>
-                <div class="prop" id="prop1"></div>
-                <div class="prop" id="prop2"></div>
-            </div>
-            <div id="info">
-                <p>info</p>
-                <button tyle="button">rectangle</button>
+                <div id="properties">
+                    <div class="prop" id="prop1"></div>
+                    <div class="prop" id="prop2"></div>
+                </div>
             </div>
         </div>
     </body>
     <script src="https://greggman.github.io/webgl-lint/webgl-lint.js"></script>
     <script id="vertex-shader-2d" type="notjs">
-        attribute vec3 a_position; // x and y
+        attribute vec2 a_position; // x and y
+        uniform vec2 u_resolution;
 
         varying vec4 fColor;
         attribute vec3 vColor;
 
         void main() {
 
-          // flip clip space y coordinate, move bottom left to top left
-          gl_Position = vec4(a_position,1);
+        // convert the position from pixels to 0.0 to 1.0
+        vec2 zeroToOne = a_position / u_resolution;
+
+        // convert from 0->1 to 0->2
+        vec2 zeroToTwo = zeroToOne * 2.0;
+
+        // convert from 0->2 to -1->+1 (clip space)
+        vec2 clipSpace = zeroToTwo - 1.0;
+        gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+          gl_PointSize = 10.0;
           fColor = vec4(vColor, 1.0);
         }
     </script>

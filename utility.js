@@ -32,37 +32,80 @@ function createProgram(gl, vertexShader, fragmentShader) {
     gl.deleteProgram(program);
 }
 
-// Fill the buffer with the values that define a rectangle.
-function setRectangle(gl, x, y, width, height) {
-    var x1 = x;
-    var x2 = x + width;
-    var y1 = y;
-    var y2 = y + height;
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
-        gl.STATIC_DRAW
-    );
-}
-
 function resizeCanvasToDisplaySize(canvas) {
-    const displayWidth = canvas.clientWidth;
-    const displayHeight = canvas.clientHeight;
+    if (canvas) {
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
 
-    const needResize =
-        canvas.width !== displayWidth || canvas.height !== displayHeight;
+        const needResize =
+            canvas.width !== displayWidth || canvas.height !== displayHeight;
 
-    if (needResize) {
-        canvas.width = displayWidth;
-        canvas.height = displayHeight;
+        if (needResize) {
+            canvas.width = displayWidth;
+            canvas.height = displayHeight;
+        }
+
+        return needResize;
     }
-
-    return needResize;
 }
 
 function pixelToClip(point, canvasSize) {
     return (point / canvasSize) * 2 - 1;
 }
 
+function euclideanDistance(point1, point2) {
+    return Math.sqrt(
+        Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2)
+    );
+}
 
-export { createShader, createProgram, resizeCanvasToDisplaySize, pixelToClip };
+function setupSlider(selector, options) {
+    let parent = document.getElementById(selector);
+
+    if (!parent) {
+        let attr = document.createElement("div");
+        attr.setAttribute("id", selector);
+        document.querySelector("#properties").appendChild(attr);
+
+        parent = document.getElementById(selector);
+    }
+
+    let name = options.name;
+    let min = options.min || 0;
+    let max = options.max || 100;
+    let value = options.value || 0;
+    let step = options.step || 1;
+    let selectorInput = selector + "input";
+    let selectorValue = selector + "value";
+    let slideFunction = options.slideFunction;
+
+    parent.innerHTML = `
+    <p>${name}</p>
+    <input type="range" min="${min}" max="${max}" value="${value}" id="${selectorInput}" step="${step}">
+    <p id="${selectorValue}">${value}</p>
+    `;
+
+    let slider = document.getElementById(selectorInput);
+    let sliderValue = document.getElementById(selectorValue);
+
+    function updateValue(value) {
+        sliderValue.textContent = value;
+    }
+
+    function handleChange(event) {
+        let value = parseFloat(event.target.value);
+        updateValue(value);
+        slideFunction(event, { value: value });
+    }
+
+    slider.addEventListener("input", handleChange);
+}
+
+export {
+    createShader,
+    createProgram,
+    resizeCanvasToDisplaySize,
+    pixelToClip,
+    euclideanDistance,
+    setupSlider,
+};

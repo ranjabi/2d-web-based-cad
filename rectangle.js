@@ -7,10 +7,35 @@ export default class Rectangle {
         this.width = width
         this.height = height
     }
+
+    getSliderAttr(canvas) {
+        return [
+            {
+                sliderID: "xPosition",
+                name: "x position",
+                slideFunction: this.updatePositionX(),
+                min: 0,
+                max: canvas.clientWidth-this.width,
+                value: this.getX()
+            },
+            {
+                sliderID: "yPosition",
+                name: "y position",
+                slideFunction: this.updatePositionY(),
+                min: 0,
+                max: canvas.clientHeight-this.height,
+                value: this.getY()
+            }
+        ]
+    }
+
+
     getCount() { //count banyak yang akan di render
         return 6
     }
+
     getPrimitiveType() {
+        // GL.TRIANGLE
         return 4
     }
 

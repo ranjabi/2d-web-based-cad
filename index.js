@@ -1,70 +1,61 @@
 import {
     createShader,
     createProgram,
+    euclideanDistance,
+    setupSlider,
     resizeCanvasToDisplaySize,
 } from "./utility.js";
-import Rectangle from "./rectangleClass.js";
+import Rectangle from "./rectangle.js";
 import Polygon from "./polygon.js";
 
-function main() {
+window.onload = function init() {
     let objects = [];
 
     let canvas = document.querySelector("#canvas");
 
     canvas.addEventListener("mousedown", (event) => {
-        // console.log(
-        //     "down",
-        //     event.clientX,
-        //     event.clientY,
-        //     canvas.clientWidth,
-        //     canvas.clientHeight,
-        //     canvas.offsetLeft,
-        //     canvas.offsetTop
-        // );
+        console.log(
+            "down",
+            event.clientX,
+            event.clientY,
+            canvas.clientWidth,
+            canvas.clientHeight,
+            canvas.offsetLeft,
+            canvas.offsetTop
+        );
 
-        // console.log(
-        //     "x, y",
-        //     pixelToClip(event.clientX),
-        //     pixelToClip(event.clientY)
-        // );
+        let closestPoint = objects.find((obj) =>
+            obj.getPosition().find((pos) => {
+                let distance = euclideanDistance(
+                    {
+                        x: event.clientX - canvas.offsetLeft,
+                        y: event.clientY - canvas.offsetTop,
+                    },
+                    { x: pos[0], y: pos[1] }
+                );
+                return distance < 20;
+            })
+        );
+        let closestObjectIdx = objects.findIndex((x) => x === closestPoint);
 
-        // TODO: ganti jadi euclidean distance
-        let closestPoint = objects.find(obj => obj.getPosition().find(pos => Math.abs(event.clientX-pos[0])<15 || Math.abs(event.clientY-pos[1])<15))
+        if (closestObjectIdx !== -1) {
+            let closestObject = objects[closestObjectIdx];
+            let sliderAttr = closestObject.getSliderAttr(canvas);
 
-        let objectIdx = objects.findIndex((x) => x === closestPoint);
-        
-        if (objectIdx !== -1) {
-            // if object exist in closest clicked point, display slider
-            setupSlider("#prop1", {
-                name: "x",
-                slideFunction: objects[objectIdx].updatePositionX(),
-                min: -1,
-                max: 1,
-                value: objects[objectIdx].getX(),
-            });
-            setupSlider("#prop2", {
-                name: "y",
-                slideFunction: objects[objectIdx].updatePositionY(),
-                min: -1,
-                max: 1,
-                value: objects[objectIdx].getY(),
-            });
+            // setup all object slider attribute
+            for (let attr of sliderAttr) {
+                let { sliderID, ...rest } = attr;
+                setupSlider(sliderID, { ...rest });
+            }
         } else {
-            let parent = document.querySelector("#prop1");
-            parent.innerHTML = "";
-            let parent2 = document.querySelector("#prop2");
-            parent2.innerHTML = "";
+            document.querySelector("#properties").innerHTML = "";
         }
-
-        console.log("titik terdekat\n", closestPoint);
 
         drawScene();
     });
 
     // WebGLRenderingContext
     let gl = canvas.getContext("webgl");
-    console.log("width", gl.canvas.width);
-    console.log("height", gl.canvas.height);
     if (!gl) {
         console.log("webgl is not available");
     }
@@ -84,23 +75,21 @@ function main() {
     let program = createProgram(gl, vertexShader, fragmentShader);
 
     // set rectangle
-    let kotak = new Rectangle(0.5, 0.5, 0.3, 0.3);
+    let kotak = new Rectangle(20, 20, 100, 100);
 
-    let kotak2 = new Rectangle(0.1, 0.1, 0.3, 0.3);
-    let kotak3 = new Polygon([-0.1, -0.1], [-0.6, -0.3], [-0.5, -0.5], [-0.1, -0.5]);
-    let kotak4 = new Polygon([-0.4, -0.7], [-0.6, -0.5], [-0.8, -0.9], [-0.5, -0.6],  [-0.1,-0.6]);
-
+    let kotak2 = new Rectangle(300, 300, 100, 100);
+    // let kotak3 = new Polygon([10, 10], [20, 30], [40, 40], [10, 40]);
+    // let kotak4 = new Polygon([-0.4, -0.7], [-0.6, -0.5], [-0.8, -0.9], [-0.5, -0.6],  [-0.1,-0.6]);
 
     objects.push(kotak);
     objects.push(kotak2);
-    objects.push(kotak3);
-    objects.push(kotak4);
-
-    // console.log("objects", objects.length)
+    // objects.push(kotak3);
+    // objects.push(kotak4);
 
     drawScene();
 
     function drawScene() {
+        // console.log("canvas", canvas)
         resizeCanvasToDisplaySize(gl.canvas);
 
         // convert clip space to pixel
@@ -112,17 +101,26 @@ function main() {
         // load shader program
         gl.useProgram(program);
 
+        let resolutionUniformLocation = gl.getUniformLocation(
+            program,
+            "u_resolution"
+        );
+        // set the resolution
+        gl.uniform2f(
+            resolutionUniformLocation,
+            gl.canvas.width,
+            gl.canvas.height
+        );
+
         // turn [[x1,y1],[x2,y2]] into [x1,y1,x2,y2]
         let objectsPosition = objects.flatMap((obj) => {
-            // console.log("obj", obj);
             return obj.getPosition();
         });
-        // console.log("objectsPosition", objectsPosition);
-        let vPosition = objectsPosition.flatMap((obj) => obj);
+
+        let flattenVertexPosition = objectsPosition.flatMap((obj) => obj);
 
         // turn [r,g,b][r,g,b] to [r,g,b,r,g,b]
         // set red color
-        // TODO: SET OBJECT COLOR RANDOMLY
         let colorPosition = objects.flatMap((obj) => obj.getColor(1, 0, 0));
 
         // COLOR BUFFER
@@ -133,7 +131,7 @@ function main() {
             new Float32Array(colorPosition),
             gl.STATIC_DRAW
         );
-        
+
         // COLOR POSITION
         let vColor = gl.getAttribLocation(program, "vColor");
         gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
@@ -144,7 +142,7 @@ function main() {
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer); // bind resource to bind point
         gl.bufferData(
             gl.ARRAY_BUFFER,
-            new Float32Array(vPosition),
+            new Float32Array(flattenVertexPosition),
             gl.STATIC_DRAW
         );
 
@@ -164,14 +162,7 @@ function main() {
         );
         gl.enableVertexAttribArray(positionAttributeLocation);
 
-        // Draw the rectangle.
-        // var primitiveType = gl.TRIANGLES;
-        // var offset = 0;
-
-        // // FOR TWO OBJECT
-        // var count = vPosition.length / 2;
-        // gl.drawArrays(primitiveType, offset, count);
-        let offset = 0
+        let offset = 0;
         for (let obj of objects) {
             let primitiveType = obj.getPrimitiveType();
             let count = obj.getCount();
@@ -179,52 +170,6 @@ function main() {
             offset += count;
         }
 
-        // console.log("object position length\n", objectsPosition.length, "objects length\n", objects.length)
-
         window.requestAnimationFrame(drawScene);
     }
-
-    function setupSlider(selector, options) {
-        let parent = document.querySelector(selector);
-        if (!selector) {
-            console.log("selector not found");
-            return;
-        }
-
-        let name = options.name;
-        let min = options.min || 0;
-        let max = options.max || 100;
-        let value = options.value || 0;
-        let selectorInput = selector.slice(1) + "input";
-        let selectorValue = selector.slice(1) + "value";
-        let slideFunction = options.slideFunction;
-        console.log("selector", selectorInput, selectorValue);
-        parent.innerHTML = `
-        <p>${options.name}</p>
-        <input type="range" min="${min}" max="${max}" value="${value}" id="${selectorInput}" step="0.1">
-        <p id="${selectorValue}">${value}</p>
-        `;
-
-        /*
-         * SETUP SLIDER
-         */
-        let slider = document.querySelector("#" + selectorInput);
-        console.log("slider", slider);
-        let sliderValue = document.querySelector("#" + selectorValue);
-
-        function updateValue(value) {
-            sliderValue.textContent = value;
-            drawScene();
-        }
-
-        function handleChange(event) {
-            let value = parseFloat(event.target.value);
-            updateValue(value);
-            slideFunction(event, { value: value });
-        }
-
-        slider.addEventListener("input", handleChange);
-    }
-}
-
-main();
+};
