@@ -8,6 +8,7 @@ import {
 } from "./utility.js";
 import Rectangle from "./rectangle.js";
 import Polygon from "./polygon.js";
+import Line from "./line.js";
 
 window.onload = function init() {
     let objects = [];
@@ -16,6 +17,7 @@ window.onload = function init() {
     let closestObject = null;
 
     let canvas = document.querySelector("#canvas");
+    let lineBtn = document.getElementById("line-btn");
     let squareBtn = document.getElementById("square-btn");
     let rectangleBtn = document.getElementById("rectangle-btn");
 
@@ -71,6 +73,16 @@ window.onload = function init() {
     /**
      * setup for object button generator
      */
+    lineBtn.addEventListener("click", (event) => {
+        let garis = new Line(
+            newObjectOffset,
+            50,
+            getRandomColor(),
+            true
+        );
+        objects.push(garis);
+        newObjectOffset += 30;
+    });
     squareBtn.addEventListener("click", (event) => {
         let kotak = new Rectangle(
             newObjectOffset,
