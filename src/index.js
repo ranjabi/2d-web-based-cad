@@ -76,9 +76,9 @@ window.onload = function init() {
     lineBtn.addEventListener("click", (event) => {
         let garis = new Line(
             newObjectOffset,
+            newObjectOffset,
             50,
             getRandomColor(),
-            true
         );
         objects.push(garis);
         newObjectOffset += 30;
