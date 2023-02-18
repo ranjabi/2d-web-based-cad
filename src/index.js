@@ -15,18 +15,29 @@ window.onload = function init() {
     let newObjectOffset = 20;
     let onPressMouse = false;
     let closestObject = null;
-
+    let makingPoligon = false;
     let canvas = document.querySelector("#canvas");
     let lineBtn = document.getElementById("line-btn");
     let squareBtn = document.getElementById("square-btn");
     let rectangleBtn = document.getElementById("rectangle-btn");
+    let polygonBtn = document.getElementById("polygon-btn");
+    let stoppolygonBtn = document.getElementById("stop-polygon-btn");
 
+    let activePolygon = 0;
+    
     canvas.addEventListener("mousedown", (event) => {
         onPressMouse = true;
 
         /**
          * display closest clicked object properties
          */
+        if (makingPoligon) {
+            activePolygon.addVertex([
+                event.clientX - canvas.offsetLeft,
+                event.clientY - canvas.offsetTop,
+            ]);
+        }
+
         let closestPoint = objects.find((obj) =>
             obj.getPosition().find((pos) => {
                 let distance = euclideanDistance(
@@ -106,7 +117,16 @@ window.onload = function init() {
         objects.push(kotak);
         newObjectOffset += 30;
     });
-
+    polygonBtn.addEventListener("click", (event) => {
+        makingPoligon = true;
+        activePolygon = new Polygon();
+        objects.push(activePolygon);
+        stoppolygonBtn.classList.remove("hidden");
+    });
+    stoppolygonBtn.addEventListener("click", (event) => {
+        makingPoligon = false;
+        stoppolygonBtn.classList.add("hidden");
+    });
     // WebGLRenderingContext
     let gl = canvas.getContext("webgl");
     if (!gl) {

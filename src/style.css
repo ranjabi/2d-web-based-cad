@@ -31,3 +31,7 @@ canvas {
 #properties {
     min-width: 10rem;
 }
+
+.hidden {
+    display: none;
+}
