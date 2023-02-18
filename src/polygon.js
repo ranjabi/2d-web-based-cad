@@ -2,6 +2,7 @@ export default class Polygon {
     constructor(...vertices) {
         // vertices is array of 2 number
         this.vertices = vertices
+        this.colors = this.setColor(1,0,0);
     }
     //https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm , enum from the link
     getPrimitiveType() {
@@ -11,8 +12,15 @@ export default class Polygon {
         return this.vertices.length
     }
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
-    getColor(r,g,b) {
-        return [r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b]
+    setColor(r,g,b) {
+        let color = []
+        for(let i = 0; i < this.getCount(); i++){
+            color.push(r,g,b)
+        }
+        return color
+    }
+    getColor() {
+        return this.colors
     }
 
     getPosition() {
@@ -20,7 +28,12 @@ export default class Polygon {
     }
     addVertex(vertex) {
         this.vertices.push(vertex)
+        this.addColor(1,0,0)
     }
+    addColor(r,g,b) {
+        this.colors.push(r,g,b)
+    }
+
     getSliderAttr(canvas) {
         return [
             {
@@ -40,6 +53,48 @@ export default class Polygon {
                 value: this.getY(),
             }
         ];
+    }
+    getColorAttr(){
+        let slider = [];
+        for (let i = 0; i < this.getCount(); i++) {
+                slider.push({
+                    sliderID: "red_" + i,
+                    name: "red point " + i,
+                    slideFunction: this.updateColor(0,i),
+                    min: 0,
+                    max: 1,
+                    value: this.getColor()[i*3 + 0],
+                    step: 0.01
+                });
+
+                slider.push({
+                    sliderID: "gree_" + i,
+                    name: "green point " + i,
+                    slideFunction: this.updateColor(1,i),
+                    min: 0,
+                    max: 1,
+                    value: this.getColor()[i*3 + 1],
+                    step: 0.01
+                });
+
+                slider.push({
+                    sliderID: "blue_" + i,
+                    name: "blue point " + i,
+                    slideFunction: this.updateColor(2,i),
+                    min: 0,
+                    max: 1,
+                    value: this.getColor()[i*3 + 1],
+                    step: 0.01
+                });
+            }
+
+        return slider;
+    }
+    updateColor(type, pointIndex) {
+        let self = this;
+        return function (event, newColor) {
+            self.colors[pointIndex*3 + type] = newColor.value
+        };
     }
     getX() {
         return this.getLeftestPoint()[0];

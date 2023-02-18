@@ -38,6 +38,8 @@ export default class Line {
         ];
     }
 
+   
+
     getCount() {
         //count banyak yang akan di render
         return 2;
@@ -58,7 +60,7 @@ export default class Line {
 
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
     setColor({ r, g, b }) {
-        return [r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b]
+        return [r,g,b, r,g,b]
     }
 
     getColor() {
@@ -114,5 +116,47 @@ export default class Line {
         // this.height = newY - this.y1;
         this.x2 = newX;
         this.y2 = newY;
+    }
+    updateColor(type, pointIndex) {
+        let self = this;
+        return function (event, newColor) {
+            self.color[pointIndex*3 + type] = newColor.value
+        };
+    }
+    getColorAttr(){
+        let slider = [];
+        for (let i = 0; i < this.getCount(); i++) {
+                slider.push({
+                    sliderID: "red_" + i,
+                    name: "red point " + i,
+                    slideFunction: this.updateColor(0,i),
+                    min: 0,
+                    max: 1,
+                    value: this.getColor()[i*3 + 0],
+                    step: 0.01
+                });
+
+                slider.push({
+                    sliderID: "gree_" + i,
+                    name: "green point " + i,
+                    slideFunction: this.updateColor(1,i),
+                    min: 0,
+                    max: 1,
+                    value: this.getColor()[i*3 + 1],
+                    step: 0.01
+                });
+
+                slider.push({
+                    sliderID: "blue_" + i,
+                    name: "blue point " + i,
+                    slideFunction: this.updateColor(2,i),
+                    min: 0,
+                    max: 1,
+                    value: this.getColor()[i*3 + 1],
+                    step: 0.01
+                });
+            }
+
+        return slider;
     }
 }

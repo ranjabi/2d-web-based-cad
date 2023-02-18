@@ -36,6 +36,8 @@ window.onload = function init() {
                 event.clientX - canvas.offsetLeft,
                 event.clientY - canvas.offsetTop,
             ]);
+            console.log(activePolygon.getColor());
+            return;
         }
 
         let closestPoint = objects.find((obj) =>
@@ -55,12 +57,20 @@ window.onload = function init() {
         if (closestObjectIdx !== -1) {
             closestObject = objects[closestObjectIdx];
             let sliderAttr = closestObject.getSliderAttr(canvas);
-
+            let colorAttr = closestObject.getColorAttr();
+            console.log(sliderAttr);
+            console.log(colorAttr);
             // setup all object slider attribute
             for (let attr of sliderAttr) {
                 let { sliderID, ...rest } = attr;
                 setupSlider(sliderID, { ...rest });
             }
+            for (let attr of colorAttr) {
+                console.log(attr);
+                let { sliderID, ...rest } = attr;
+                setupSlider(sliderID, { ...rest });
+            }
+
         } else {
             document.querySelector("#properties").innerHTML = "";
         }
@@ -187,7 +197,7 @@ window.onload = function init() {
         let flattenVertexPosition = objectsPosition.flatMap((obj) => obj);
 
         // turn [r,g,b][r,g,b] to [r,g,b,r,g,b]
-        let colorPosition = objects.flatMap((obj) => obj.getColor(1, 0, 0));
+        let colorPosition = objects.flatMap((obj) => obj.getColor());
 
         // COLOR BUFFER
         let colorBuffer = gl.createBuffer();
