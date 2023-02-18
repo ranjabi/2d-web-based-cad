@@ -116,6 +116,24 @@ function setupSlider(selector, options) {
     slider.addEventListener("input", handleChange);
 }
 
+function convertToJson(objects){
+    console.log(objects);
+    let string = JSON.stringify(objects);
+    download(string, 'text/json', (new Date()).getTime() + '_objects.json')
+}
+
+function convertFromJson(json){
+    let objects = JSON.parse(json);
+    return objects;
+}
+function download(content, mimeType, filename){
+    const a = document.createElement('a') // Create "a" element
+    const blob = new Blob([content], {type: mimeType}) // Create a blob (file-like object)
+    const url = URL.createObjectURL(blob) // Create an object URL from blob
+    a.setAttribute('href', url) // Set "a" element link
+    a.setAttribute('download', filename) // Set download filename
+    a.click() // Start downloading
+  }
 export {
     createShader,
     createProgram,
@@ -123,5 +141,7 @@ export {
     pixelToClip,
     euclideanDistance,
     setupSlider,
-    getRandomColor
+    getRandomColor,
+    convertToJson,
+    convertFromJson
 };

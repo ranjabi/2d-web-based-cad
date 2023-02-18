@@ -11,6 +11,11 @@
         <div class="container">
             <canvas id="canvas"></canvas>
             <div id="properties-wrapper" style="overflow:scroll; height:500px;">
+                <form id="loadfile"">
+                    <label for="myFile">Load File:</label>
+                    <input type="file" id="fileinput" name="filename" >
+                    <input for="loadfile" id="loadfile-submit" type="submit">
+                </form>
                 <p>properties</p>
                 <button id="line-btn">garis</button>
                 <button id="square-btn">persegi</button>
@@ -21,6 +26,8 @@
                     <div class="prop" id="prop1"></div>
                     <div class="prop" id="prop2"></div>
                 </div>
+                <br />
+                <button id="savefile">Save configuration</button>
             </div>
         </div>
     </body>

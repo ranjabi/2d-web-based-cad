@@ -12,6 +12,7 @@ export default class Rectangle {
         this.height = height;
         this.color = this.setColor(color);
         this.isSquare = isSquare;
+        this.type = "rectangle";
     }
 
     getSliderAttr(canvas) {
@@ -55,7 +56,7 @@ export default class Rectangle {
 
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
     setColor({ r, g, b }) {
-        return [r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b]
+        return [r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b]
     }
 
     getColor() {

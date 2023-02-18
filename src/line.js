@@ -15,6 +15,7 @@ export default class Line {
         this.y2 = y + length;
         this.length = length;
         this.color = this.setColor(color);
+        this.type = "line";
     }
 
     getSliderAttr(canvas) {

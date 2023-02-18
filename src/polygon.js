@@ -3,6 +3,7 @@ export default class Polygon {
         // vertices is array of 2 number
         this.vertices = vertices
         this.colors = this.setColor(1,0,0);
+        this.type = "polygon";
     }
     //https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm , enum from the link
     getPrimitiveType() {

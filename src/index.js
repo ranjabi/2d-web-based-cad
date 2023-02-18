@@ -5,10 +5,13 @@ import {
     setupSlider,
     resizeCanvasToDisplaySize,
     getRandomColor,
+    convertToJson,
+    convertFromJson
 } from "./utility.js";
 import Rectangle from "./rectangle.js";
 import Polygon from "./polygon.js";
 import Line from "./line.js";
+
 
 window.onload = function init() {
     let objects = [];
@@ -22,12 +25,64 @@ window.onload = function init() {
     let rectangleBtn = document.getElementById("rectangle-btn");
     let polygonBtn = document.getElementById("polygon-btn");
     let stoppolygonBtn = document.getElementById("stop-polygon-btn");
+    let loadform = document.getElementById("loadfile");
+    let fileinput = document.getElementById("fileinput");
+    let savefile = document.getElementById("savefile");
+
+    let file = null;
+    fileinput.addEventListener("change", (event) => {
+        file = event.target.files[0];
+    });
+    loadform.addEventListener("submit", (event) => {
+        event.preventDefault();
+        loadform.reset();
+        let fileReader = new FileReader();
+        fileReader.onload = (event) => {
+            let json = event.target.result;
+            let read = convertFromJson(json);
+            for (let i = 0; i < read.length; i++){
+                console.log(read[i]);
+                switch(read[i].type){
+                    case 'polygon':
+                        let poly = new Polygon();
+                        poly.colors = read[i].colors;
+                        poly.vertices = read[i].vertices;
+                        console.log(poly);
+                        objects.push(poly);
+                        break;
+                    case 'rectangle':
+                        let rect = new Rectangle(read[i].x1, read[i].y1, read[i].width, read[i].height, {r: 0, g: 0, b: 0}, read[i].isSquare);
+                        rect.color = read[i].color;
+                        console.log(rect);
+                        objects.push(rect);
+                        break;
+                    case 'line':
+                        let line = new Line(read[i].x1, read[i].y1, read[i].length, {r: 0, g: 0, b: 0});
+                        line.color = read[i].color;
+
+                        console.log(line);
+                        objects.push(line);
+                        break;
+                }
+            }
+        }
+        fileReader.readAsText(file);
+        drawScene();
+
+        
+    });
+
+    savefile.addEventListener("click", (event) => {
+        event.preventDefault();
+        convertToJson(objects);
+    });
+        
 
     let activePolygon = 0;
     
     canvas.addEventListener("mousedown", (event) => {
         onPressMouse = true;
-
+        console.log(objects);
         /**
          * display closest clicked object properties
          */
@@ -60,7 +115,7 @@ window.onload = function init() {
             let colorAttr = closestObject.getColorAttr();
             console.log(sliderAttr);
             console.log(colorAttr);
-            // setup all object slider attribute
+            document.querySelector("#properties").innerHTML = "";
             for (let attr of sliderAttr) {
                 let { sliderID, ...rest } = attr;
                 setupSlider(sliderID, { ...rest });
@@ -195,9 +250,9 @@ window.onload = function init() {
         });
 
         let flattenVertexPosition = objectsPosition.flatMap((obj) => obj);
-
         // turn [r,g,b][r,g,b] to [r,g,b,r,g,b]
         let colorPosition = objects.flatMap((obj) => obj.getColor());
+        // console.log("color", colorPosition); 
 
         // COLOR BUFFER
         let colorBuffer = gl.createBuffer();
