@@ -36,6 +36,6 @@ export default class Vertice {
     getPosition() {
         return [this.x, this.y];
     }
-
+    
     // TODO: update position
 }

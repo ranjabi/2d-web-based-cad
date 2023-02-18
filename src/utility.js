@@ -115,7 +115,38 @@ function setupSlider(selector, options) {
 
     slider.addEventListener("input", handleChange);
 }
+function setupColorPicker(selector, options) {
+    let parent = document.getElementById(selector);
+    if (!parent) {
+        let attr = document.createElement("div");
+        attr.setAttribute("id", selector);
+        document.querySelector("#properties").appendChild(attr);
 
+        parent = document.getElementById(selector);
+    }
+    let name = options.name;
+    let value = options.value || "#000000";
+    parent.innerHTML = `
+        <p>${name}</p>
+        <input type="color" value="${value}" id="${selector}-input">
+        <p id="${selector}-value">${value}</p>
+    `
+
+    let colorPicker = document.getElementById(selector + "-input");
+    let colorValue = document.getElementById(selector + "-value");
+
+    function updateValue(value) {
+        colorValue.textContent = value;
+    }
+
+    function handleChange(event) {
+        let value = event.target.value;
+        updateValue(value);
+        options.slideFunction(event, { value: value });
+    }
+
+    colorPicker.addEventListener("input", handleChange);
+}
 function convertToJson(objects){
     console.log(objects);
     let string = JSON.stringify(objects);
@@ -134,6 +165,25 @@ function download(content, mimeType, filename){
     a.setAttribute('download', filename) // Set download filename
     a.click() // Start downloading
   }
+function hextoRGB(hex) {
+    let r = 0, g = 0, b = 0;
+    let rr = hex.substring(1, 3);
+    let gg = hex.substring(3, 5);
+    let bb = hex.substring(5, 7);
+    r = parseInt(rr, 16);
+    g = parseInt(gg, 16);
+    b = parseInt(bb, 16);
+    return [r / 255, g / 255, b / 255];
+}
+function RGBtoHex(r, g, b) {
+    let rr = (r * 255).toString(16);
+    let gg = (g * 255).toString(16);
+    let bb = (b * 255).toString(16);
+    if (rr.length == 1) rr = "0" + rr;
+    if (gg.length == 1) gg = "0" + gg;
+    if (bb.length == 1) bb = "0" + bb;
+    return "#" + rr + gg + bb;
+}
 export {
     createShader,
     createProgram,
@@ -143,5 +193,8 @@ export {
     setupSlider,
     getRandomColor,
     convertToJson,
-    convertFromJson
+    convertFromJson,
+    setupColorPicker,
+    hextoRGB,
+    RGBtoHex
 };

@@ -6,7 +6,8 @@ import {
     resizeCanvasToDisplaySize,
     getRandomColor,
     convertToJson,
-    convertFromJson
+    convertFromJson,
+    setupColorPicker
 } from "./utility.js";
 import Rectangle from "./rectangle.js";
 import Polygon from "./polygon.js";
@@ -122,8 +123,8 @@ window.onload = function init() {
             }
             for (let attr of colorAttr) {
                 console.log(attr);
-                let { sliderID, ...rest } = attr;
-                setupSlider(sliderID, { ...rest });
+                let { id, ...rest } = attr;
+                setupColorPicker(id, { ...rest });
             }
 
         } else {

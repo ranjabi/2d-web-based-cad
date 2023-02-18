@@ -1,3 +1,7 @@
+import {
+    hextoRGB,
+    RGBtoHex,
+} from "./utility.js";
 export default class Polygon {
     constructor(...vertices) {
         // vertices is array of 2 number
@@ -59,44 +63,25 @@ export default class Polygon {
         let slider = [];
         for (let i = 0; i < this.getCount(); i++) {
                 slider.push({
-                    sliderID: "red_" + i,
-                    name: "red point " + i,
-                    slideFunction: this.updateColor(0,i),
-                    min: 0,
-                    max: 1,
-                    value: this.getColor()[i*3 + 0],
-                    step: 0.01
-                });
-
-                slider.push({
-                    sliderID: "gree_" + i,
-                    name: "green point " + i,
-                    slideFunction: this.updateColor(1,i),
-                    min: 0,
-                    max: 1,
-                    value: this.getColor()[i*3 + 1],
-                    step: 0.01
-                });
-
-                slider.push({
-                    sliderID: "blue_" + i,
-                    name: "blue point " + i,
-                    slideFunction: this.updateColor(2,i),
-                    min: 0,
-                    max: 1,
-                    value: this.getColor()[i*3 + 1],
-                    step: 0.01
+                    id: "point_" + i,
+                    name: "color point " + i,
+                    slideFunction: this.updateColor(i),
+                    value: RGBtoHex(this.colors[i*3 + 0], this.colors[i*3 + 1], this.colors[i*3 + 2])
                 });
             }
 
         return slider;
     }
-    updateColor(type, pointIndex) {
+    updateColor(pointIndex) {
         let self = this;
         return function (event, newColor) {
-            self.colors[pointIndex*3 + type] = newColor.value
+            let rgb = hextoRGB(newColor.value)
+            self.colors[pointIndex*3 + 0] = rgb[0]
+            self.colors[pointIndex*3 + 1] = rgb[1]
+            self.colors[pointIndex*3 + 2] = rgb[2]
         };
     }
+
     getX() {
         return this.getLeftestPoint()[0];
     }
