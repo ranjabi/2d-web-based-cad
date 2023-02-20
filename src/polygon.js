@@ -7,7 +7,9 @@ export default class Polygon {
         // vertices is array of 2 number
         this.vertices = vertices
         this.colors = this.setColor(1,0,0);
+        this.deletedCount = 0;
         this.type = "polygon";
+        this.indexes = this.setIndexes()
     }
     //https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm , enum from the link
     getPrimitiveType() {
@@ -15,6 +17,24 @@ export default class Polygon {
     }
     getCount() {
         return this.vertices.length
+    }
+    setIndexes(){
+        let arr = []
+        for (let i = 0; i < this.getCount ; i++){
+            arr.push(i)
+        }
+        return arr
+    }
+    deleteIndexes(idx){
+        let trueidx = this.getIndex(idx)
+        if (trueidx < 0) return;
+        for (let i = trueidx; i < this.indexes.length; i++){
+            this.indexes[i] = this.indexes[i+1]
+        }
+        this.indexes.pop()
+    }
+    getIndex(idx){
+        return this.indexes.indexOf(idx)
     }
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
     setColor(r,g,b) {
@@ -34,6 +54,9 @@ export default class Polygon {
     addVertex(vertex) {
         this.vertices.push(vertex)
         this.addColor(1,0,0)
+        let max_index = Math.max(...this.indexes)
+        max_index = max_index < 0 ? 0 : max_index + 1
+        this.indexes.push(max_index)
     }
     addColor(r,g,b) {
         this.colors.push(r,g,b)
@@ -66,7 +89,8 @@ export default class Polygon {
                     id: "point_" + i,
                     name: "color point " + i,
                     slideFunction: this.updateColor(i),
-                    value: RGBtoHex(this.colors[i*3 + 0], this.colors[i*3 + 1], this.colors[i*3 + 2])
+                    value: RGBtoHex(this.colors[i*3 + 0], this.colors[i*3 + 1], this.colors[i*3 + 2]),
+                    deleteFunction : this.deleteVertex(i)
                 });
             }
 
@@ -75,14 +99,34 @@ export default class Polygon {
     updateColor(pointIndex) {
         let self = this;
         return function (event, newColor) {
+            let trueidx = self.getIndex(pointIndex)
             let rgb = hextoRGB(newColor.value)
-            self.colors[pointIndex*3 + 0] = rgb[0]
-            self.colors[pointIndex*3 + 1] = rgb[1]
-            self.colors[pointIndex*3 + 2] = rgb[2]
+            if (trueidx < 0 ) return;
+            self.colors[trueidx*3 + 0] = rgb[0]
+            self.colors[trueidx*3 + 1] = rgb[1]
+            self.colors[trueidx*3 + 2] = rgb[2]
         };
     }
-    getDeleteVertexButtons(){
-        
+    deleteVertex(pointIndex){
+        let self = this;
+        return function(event){
+            let trueidx = self.getIndex(pointIndex)
+            if (trueidx >= 0 && trueidx < self.vertices.length){
+                for (let i = trueidx; i < self.vertices.length - 1; i++){
+                    self.vertices[i] = self.vertices[i+1]
+                    self.colors[i*3 + 0] = self.colors[(i+1)*3 + 0]
+                    self.colors[i*3 + 1] = self.colors[(i+1)*3 + 1]
+                    self.colors[i*3 + 2] = self.colors[(i+1)*3 + 2]
+
+                }
+                self.vertices.pop()
+                self.colors.pop()
+                self.colors.pop()
+                self.colors.pop()
+                self.deleteIndexes(trueidx)
+                self.deletedCount++
+            }
+        }
     }
     getX() {
         return this.getLeftestPoint()[0];
@@ -93,9 +137,7 @@ export default class Polygon {
     updatePositionX() {
         let self = this;
         return function (event, newCoor) {
-            console.log(newCoor.value, self.getX())
             let delta = newCoor.value - self.getX();
-            console.log(delta)
             for (let i = 0; i < self.vertices.length; i++) {
                 self.vertices[i][0] += delta;
             }
@@ -104,9 +146,7 @@ export default class Polygon {
     updatePositionY() {
         let self = this;
         return function (event, newCoor) {
-            console.log(newCoor.value, self.getX())
             let delta = newCoor.value - self.getY();
-            console.log(delta)
             for (let i = 0; i < self.vertices.length; i++) {
 
                 self.vertices[i][1] += delta;

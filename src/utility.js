@@ -131,6 +131,14 @@ function setupColorPicker(selector, options) {
         <input type="color" value="${value}" id="${selector}-input">
         <p id="${selector}-value">${value}</p>
     `
+    if (options.deleteFunction)
+        parent.innerHTML += `<button id="${selector}-delete">delete ${selector}</button>`
+        let deleteButton = document.getElementById(selector+ "-delete")
+        function handleDelete(event){
+            parent.innerHTML = '';
+            options.deleteFunction(event)
+        }
+        deleteButton.addEventListener("click", handleDelete)
 
     let colorPicker = document.getElementById(selector + "-input");
     let colorValue = document.getElementById(selector + "-value");
@@ -144,6 +152,7 @@ function setupColorPicker(selector, options) {
         updateValue(value);
         options.slideFunction(event, { value: value });
     }
+
 
     colorPicker.addEventListener("input", handleChange);
 }

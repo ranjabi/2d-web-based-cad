@@ -147,6 +147,7 @@ window.onload = function init() {
     canvas.addEventListener("mouseup", (event) => {
         onPressMouse = false;
         console.log("mouse up");
+        console.log("")
     });
 
     /**
