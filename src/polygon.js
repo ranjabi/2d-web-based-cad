@@ -20,7 +20,7 @@ export default class Polygon {
     }
     setIndexes(){
         let arr = []
-        for (let i = 0; i < this.getCount ; i++){
+        for (let i = 0; i < this.getCount() ; i++){
             arr.push(i)
         }
         return arr
@@ -89,6 +89,8 @@ export default class Polygon {
     }
     getColorAttr(){
         let slider = [];
+        this.indexes = this.setIndexes()
+        console.log(this.indexes)
         for (let i = 0; i < this.getCount(); i++) {
                 slider.push({
                     id: "point_" + i,

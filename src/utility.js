@@ -138,7 +138,7 @@ function setupColorPicker(selector, options) {
             parent.innerHTML = '';
             options.deleteFunction(event)
         }
-        deleteButton.addEventListener("click", handleDelete)
+        deleteButton?.addEventListener("click", handleDelete)
 
     let colorPicker = document.getElementById(selector + "-input");
     let colorValue = document.getElementById(selector + "-value");

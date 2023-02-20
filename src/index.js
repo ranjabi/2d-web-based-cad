@@ -20,6 +20,8 @@ window.onload = function init() {
     let onPressMouse = false;
     let closestObject = null;
     let makingPoligon = false;
+    let selectedPoligon = null;
+    let addingPointtoPolygon = false;
     let canvas = document.querySelector("#canvas");
     let lineBtn = document.getElementById("line-btn");
     let squareBtn = document.getElementById("square-btn");
@@ -29,6 +31,8 @@ window.onload = function init() {
     let loadform = document.getElementById("loadfile");
     let fileinput = document.getElementById("fileinput");
     let savefile = document.getElementById("savefile");
+    let addPointbutton = document.getElementById("add-point-polygon-btn");
+    let stopAddPointbutton = document.getElementById("stop-add-polygon-btn");
 
     let file = null;
     fileinput.addEventListener("change", (event) => {
@@ -88,6 +92,14 @@ window.onload = function init() {
         /**
          * display closest clicked object properties
          */
+        if (addingPointtoPolygon) {
+            selectedPoligon.addVertex([
+                event.clientX - canvas.offsetLeft,
+                event.clientY - canvas.offsetTop,
+            ])
+
+            return;
+        }
         if (makingPoligon) {
             activePolygon.addVertex([
                 event.clientX - canvas.offsetLeft,
@@ -115,12 +127,16 @@ window.onload = function init() {
             closestObject = objects[closestObjectIdx];
             let sliderAttr = closestObject.getSliderAttr(canvas);
             let colorAttr = closestObject.getColorAttr();
-            console.log(sliderAttr);
-            console.log(colorAttr);
-            document.querySelector("#properties").innerHTML = "";
+            let properties = document.querySelector("#properties").innerHTML = "";
             for (let attr of sliderAttr) {
                 let { sliderID, ...rest } = attr;
                 setupSlider(sliderID, { ...rest });
+            }
+            if (closestObject.type == 'polygon'){
+                addPointbutton.classList.remove("hidden")  
+            }
+            else {
+                addPointbutton.classList.add("hidden")
             }
             for (let attr of colorAttr) {
                 console.log(attr);
@@ -130,6 +146,7 @@ window.onload = function init() {
 
         } else {
             document.querySelector("#properties").innerHTML = "";
+            addPointbutton.classList.add("hidden")
         }
 
         drawScene();
@@ -196,6 +213,19 @@ window.onload = function init() {
         makingPoligon = false;
         stoppolygonBtn.classList.add("hidden");
     });
+
+
+    addPointbutton.addEventListener("click", (event) => {
+        addingPointtoPolygon = true
+        selectedPoligon = closestObject
+        stopAddPointbutton.classList.remove("hidden")
+    })
+
+    stopAddPointbutton.addEventListener("click", (event) => {
+        addingPointtoPolygon = false
+        selectedPoligon = null
+        stopAddPointbutton.classList.add("hidden")
+    })
     // WebGLRenderingContext
     let gl = canvas.getContext("webgl");
     if (!gl) {
