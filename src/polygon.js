@@ -26,14 +26,19 @@ export default class Polygon {
         return arr
     }
     deleteIndexes(idx){
+        console.log(this.indexes)
+
         let trueidx = this.getIndex(idx)
+        console.log(trueidx)
         if (trueidx < 0) return;
         for (let i = trueidx; i < this.indexes.length; i++){
             this.indexes[i] = this.indexes[i+1]
         }
         this.indexes.pop()
+        console.log(this.indexes)
     }
     getIndex(idx){
+        console.log(idx)
         return this.indexes.indexOf(idx)
     }
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
@@ -123,7 +128,7 @@ export default class Polygon {
                 self.colors.pop()
                 self.colors.pop()
                 self.colors.pop()
-                self.deleteIndexes(trueidx)
+                self.deleteIndexes(pointIndex)
                 self.deletedCount++
             }
         }
