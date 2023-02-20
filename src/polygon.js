@@ -81,7 +81,9 @@ export default class Polygon {
             self.colors[pointIndex*3 + 2] = rgb[2]
         };
     }
-
+    getDeleteVertexButtons(){
+        
+    }
     getX() {
         return this.getLeftestPoint()[0];
     }

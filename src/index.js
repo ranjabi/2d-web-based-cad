@@ -60,7 +60,8 @@ window.onload = function init() {
                     case 'line':
                         let line = new Line(read[i].x1, read[i].y1, read[i].length, {r: 0, g: 0, b: 0});
                         line.color = read[i].color;
-
+                        line.x2 = read[i].x2
+                        line.y2 = read[i].y2
                         console.log(line);
                         objects.push(line);
                         break;
@@ -135,6 +136,7 @@ window.onload = function init() {
     });
 
     canvas.addEventListener("mousemove", (event) => {
+        if (makingPoligon) return;
         if (onPressMouse) {
             if (closestObject) {
                 closestObject.updateCoor({newX: event.clientX - canvas.offsetLeft, newY:event.clientY - canvas.offsetTop})

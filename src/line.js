@@ -120,12 +120,6 @@ export default class Line {
         this.x2 = newX;
         this.y2 = newY;
     }
-    updateColor(type, pointIndex) {
-        let self = this;
-        return function (event, newColor) {
-            self.color[pointIndex*3 + type] = newColor.value
-        };
-    }
     getColorAttr(){
         let slider = [];
         for (let i = 0; i < this.getCount(); i++) {
