@@ -332,6 +332,10 @@ window.onload = function init() {
         for (let obj of objects) {
             let primitiveType = obj.getPrimitiveType();
             let count = obj.getCount();
+            if (count == 0 && !makingPoligon) {
+                objects.splice(objects.indexOf(obj), 1)
+                continue;
+            }
             gl.drawArrays(gl.POINTS, offset, count);
             gl.drawArrays(primitiveType, offset, count);
             offset += count;
