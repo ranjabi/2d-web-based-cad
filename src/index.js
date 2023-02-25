@@ -46,19 +46,19 @@ window.onload = function init() {
             let json = event.target.result;
             let read = convertFromJson(json);
             for (let i = 0; i < read.length; i++){
-                console.log(read[i]);
+                // console.log(read[i]);
                 switch(read[i].type){
                     case 'polygon':
                         let poly = new Polygon();
                         poly.colors = read[i].colors;
                         poly.vertices = read[i].vertices;
-                        console.log(poly);
+                        // console.log(poly);
                         objects.push(poly);
                         break;
                     case 'rectangle':
                         let rect = new Rectangle(read[i].x1, read[i].y1, read[i].width, read[i].height, {r: 0, g: 0, b: 0}, read[i].isSquare);
                         rect.color = read[i].color;
-                        console.log(rect);
+                        // console.log(rect);
                         objects.push(rect);
                         break;
                     case 'line':
@@ -66,7 +66,7 @@ window.onload = function init() {
                         line.color = read[i].color;
                         line.x2 = read[i].x2
                         line.y2 = read[i].y2
-                        console.log(line);
+                        // console.log(line);
                         objects.push(line);
                         break;
                 }
@@ -88,7 +88,6 @@ window.onload = function init() {
     
     canvas.addEventListener("mousedown", (event) => {
         onPressMouse = true;
-        console.log(objects);
         /**
          * display closest clicked object properties
          */
@@ -105,7 +104,7 @@ window.onload = function init() {
                 event.clientX - canvas.offsetLeft,
                 event.clientY - canvas.offsetTop,
             ]);
-            console.log(activePolygon.getColor());
+            // console.log(activePolygon.getColor());
             return;
         }
 
@@ -139,7 +138,7 @@ window.onload = function init() {
                 addPointbutton.classList.add("hidden")
             }
             for (let attr of colorAttr) {
-                console.log(attr);
+                // console.log(attr);
                 let { id, ...rest } = attr;
                 setupColorPicker(id, { ...rest });
             }
@@ -163,8 +162,6 @@ window.onload = function init() {
 
     canvas.addEventListener("mouseup", (event) => {
         onPressMouse = false;
-        console.log("mouse up");
-        console.log("")
     });
 
     /**
@@ -246,16 +243,10 @@ window.onload = function init() {
 
     let program = createProgram(gl, vertexShader, fragmentShader);
 
-    // let kotak3 = new Polygon([10, 10], [20, 30], [40, 40], [10, 40]);
-    // let kotak4 = new Polygon([-0.4, -0.7], [-0.6, -0.5], [-0.8, -0.9], [-0.5, -0.6],  [-0.1,-0.6]);
-
-    // objects.push(kotak3);
-    // objects.push(kotak4);
 
     drawScene();
 
     function drawScene() {
-        // console.log("canvas", canvas)
         resizeCanvasToDisplaySize(gl.canvas);
 
         // convert clip space to pixel

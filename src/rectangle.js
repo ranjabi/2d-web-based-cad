@@ -5,10 +5,14 @@ import {
 } from "./utility.js";
 export default class Rectangle {
     constructor(x, y, width, height, color, isSquare = false) {
+        // top left
         this.x1 = x;
         this.y1 = y;
+        
+        // bottom right
         this.x2 = x + width;
         this.y2 = y + height;
+
         this.width = width;
         this.height = height;
         this.color = this.setColor(color);
@@ -92,51 +96,107 @@ export default class Rectangle {
     }
 
     updateCoor({ newX, newY }) {
-        // choose whether update bottom right or top left
+        // choose which vertex to update
+        let topLeft = { x: this.x1, y: this.y1 }
+        let topRight = { x: this.x2, y: this.y1 }
+        let bottomLeft = { x: this.x1, y: this.y2 }
+        let bottomRight = { x: this.x2, y: this.y2 }
+
+        let offset = 20
+
         if (
             euclideanDistance(
                 { x: newX, y: newY },
-                { x: this.x1, y: this.y1 }
-            ) < 20
+                topLeft
+            ) < offset
         ) {
-            if (this.isSquare) {
-                newY = newX
-            }
             this.updateTopLeft({ newX, newY });
-        } else {
+        } else if (
+            euclideanDistance(
+                { x: newX, y: newY },
+                topRight
+            ) < offset
+        ) {
+            this.updateTopRight({ newX, newY });
+        }  
+        else if (
+            euclideanDistance(
+                { x: newX, y: newY },
+                bottomLeft
+            ) < offset
+        ) {
+            this.updateBottomLeft({ newX, newY });
+        }  else if (
+            euclideanDistance(
+                { x: newX, y: newY },
+                bottomRight
+            ) < offset
+        ) {
             this.updateBottomRight({ newX, newY });
         }
     }
 
     updateTopLeft({ newX, newY }) {
+        // if square, height = width (only reference the width changes)
         if (this.isSquare) {
-            this.width = newX - this.x2;
+            this.width = Math.abs(newX - this.x2);
             this.height = this.width;
             this.x1 = newX;
-            this.y1 = this.y2 + this.width;
+            this.y1 = this.y2 - this.width;
         } else {
-            this.width = newX - this.x2
-            this.height = newY - this.y2
+            this.width = Math.abs(newX - this.x2)
+            this.height = Math.abs(newY - this.y2)
             this.x1 = newX;
             this.y1 = newY;
         }
         
     }
 
+    updateTopRight({ newX, newY }) {
+        if (this.isSquare) {
+            this.width = Math.abs(newX - this.x1);
+            this.height = this.width;
+            this.x2 = newX;
+            this.y1 = this.y2 - this.width;
+        } else {
+            this.width = Math.abs(newX - this.x1)
+            this.height = Math.abs(newY - this.y2)
+            this.x2 = newX;
+            this.y1 = newY;
+        }
+        
+    }
+
+    updateBottomLeft({ newX, newY }) {
+        if (this.isSquare) {
+            this.width = Math.abs(newX - this.x2);
+            this.height = this.width;
+            this.x1 = newX;
+            this.y2 = this.y1 + this.width;
+        } else {
+            this.width = Math.abs(newX - this.x2);
+            this.height = Math.abs(newY - this.y1);
+            this.x1 = newX;
+            this.y2 = newY;
+        }
+        
+    }
+
     updateBottomRight({ newX, newY }) {
         if (this.isSquare) {
-            this.width = newX - this.x1;
+            this.width = Math.abs(newX - this.x1);
             this.height = this.width;
             this.x2 = newX;
             this.y2 = this.y1 + this.width;
         } else {
-            this.width = newX - this.x1;
-            this.height = newY - this.y1;
+            this.width = Math.abs(newX - this.x1);
+            this.height = Math.abs(newY - this.y1);
             this.x2 = newX;
             this.y2 = newY;
         }
         
     }
+
     getColorAttr(){
         let slider = [];
         for (let i = 0; i < this.getCount(); i++) {
