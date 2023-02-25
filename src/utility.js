@@ -1,16 +1,6 @@
 function getRandomColor() {
-    // return random color of black, red, yellow, green, blue, magenta, cyan
-    let baseColor = 
-    [
-        {r: 0.0, g: 0.0, b: 0.0}, 
-        {r: 1.0, g: 0.0, b: 0.0}, 
-        {r: 1.0, g: 1.0, b: 0.0}, 
-        {r: 0.0, g: 1.0, b: 0.0}, 
-        {r: 0.0, g: 0.0, b: 1.0}, 
-        {r: 1.0, g: 0.0, b: 1.0}, 
-        {r: 0.0, g: 1.0, b: 1.0}, 
-    ]
-    return baseColor[Math.floor(Math.random()*baseColor.length)]
+    // return random color
+    return {r: Math.random(), g: Math.random(), b: Math.random()}
 }
 
 // create a shader, upload the glsl source, compile the shader
