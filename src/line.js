@@ -6,9 +6,6 @@ import {
 } from "./utility.js";
 
 export default class Line {
-    // let x1 = new Vertice(
-
-    // );
 
     constructor(x, y, length, color) {
         this.x1 = x;
@@ -37,6 +34,14 @@ export default class Line {
                 min: 0,
                 max: canvas.clientHeight - this.height,
                 value: this.getY(),
+            },
+            {
+                sliderID: "panjang",
+                name: "panjang",
+                slideFunction: this.updateLength(),
+                min: 0,
+                max: canvas.clientWidth - this.x1,
+                value: this.getLength(),
             }
         ];
     }
@@ -61,6 +66,10 @@ export default class Line {
         return this.y1;
     }
 
+    getLength() {
+        return this.length;
+    }
+
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
     setColor({ r, g, b }) {
         return [r,g,b, r,g,b]
@@ -80,17 +89,44 @@ export default class Line {
     updatePositionX() {
         let self = this;
         return function (event, newCoor) {
-            self.x1 = newCoor.value;
-            self.x2 = newCoor.value + self.length;
+            if (self.x1 < self.x2) {
+                self.x1 = newCoor.value;
+                self.x2 = newCoor.value + self.length;
+            } else {
+                self.x2 = newCoor.value;
+                self.x1 = newCoor.value + self.length;
+            }
+            
         };
     }
 
     updatePositionY() {
         let self = this;
         return function (event, newCoor) {
-            self.y1 = newCoor.value;
-            self.y2 = newCoor.value + self.length;
+            if (self.y1 < self.y2) {
+                self.y1 = newCoor.value;
+                self.y2 = newCoor.value + self.length;
+            } else {
+                self.y2 = newCoor.value;
+                self.y1 = newCoor.value + self.length;
+            }
+            
         };
+    }
+
+    updateLength() {
+        let self = this;
+        return function (event, newLength) {
+            self.length = newLength.value
+            if (self.x1 < self.x2 && self.y1 < self.y2) {
+                self.x2 = self.x1 + newLength.value
+                self.y2 = self.y1 + newLength.value
+            } else {
+                self.x1 = self.x2 + newLength.value
+                self.y1 = self.y2 + newLength.value
+            }
+            
+        }
     }
 
     updateCoor({ newX, newY }) {
@@ -108,17 +144,21 @@ export default class Line {
     }
 
     updateLeft({ newX, newY }) {
-        this.length = newX - this.x2;
-        // this.height = newY - this.y2
         this.x1 = newX;
         this.y1 = newY; 
+        this.length = euclideanDistance(
+            {x: this.x1, y: this.y1},
+            {x: this.x2, y: this.y2}
+        )
     }
 
     updateRight({ newX, newY }) {
-        this.length = newX - this.x1;
-        // this.height = newY - this.y1;
         this.x2 = newX;
         this.y2 = newY;
+        this.length = euclideanDistance(
+            {x: this.x1, y: this.y1},
+            {x: this.x2, y: this.y2}
+        )
     }
     getColorAttr(){
         let slider = [];
