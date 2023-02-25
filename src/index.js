@@ -127,10 +127,12 @@ window.onload = function init() {
             let sliderAttr = closestObject.getSliderAttr(canvas);
             let colorAttr = closestObject.getColorAttr();
             let properties = document.querySelector("#properties").innerHTML = "";
+
             for (let attr of sliderAttr) {
                 let { sliderID, ...rest } = attr;
                 setupSlider(sliderID, { ...rest });
             }
+
             if (closestObject.type == 'polygon'){
                 addPointbutton.classList.remove("hidden")  
             }
@@ -242,7 +244,6 @@ window.onload = function init() {
     );
 
     let program = createProgram(gl, vertexShader, fragmentShader);
-
 
     drawScene();
 

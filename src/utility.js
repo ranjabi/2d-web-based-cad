@@ -1,6 +1,6 @@
 function getRandomColor() {
     // return random color
-    return {r: Math.random(), g: Math.random(), b: Math.random()}
+    return {r: Math.random().toFixed(2), g: Math.random().toFixed(2), b: Math.random().toFixed(2)}
 }
 
 // create a shader, upload the glsl source, compile the shader

@@ -8,7 +8,7 @@ export default class Rectangle {
         // top left
         this.x1 = x;
         this.y1 = y;
-        
+
         // bottom right
         this.x2 = x + width;
         this.y2 = y + height;
@@ -21,7 +21,7 @@ export default class Rectangle {
     }
 
     getSliderAttr(canvas) {
-        return [
+        let attr = [
             {
                 sliderID: "x-position",
                 name: "x",
@@ -31,14 +31,34 @@ export default class Rectangle {
                 value: this.getX(),
             },
             {
-                sliderID: "y",
+                sliderID: "y-position",
                 name: "y position",
                 slideFunction: this.updatePositionY(),
                 min: 0,
                 max: canvas.clientHeight - this.height,
                 value: this.getY(),
+            },
+            {
+                sliderID: "panjang",
+                name: "panjang",
+                slideFunction: this.updateWidth(),
+                min: 0,
+                max: canvas.clientWidth - this.x1,
+                value: this.getWidth(),
             }
-        ];
+        ]
+
+        if (!this.isSquare) {
+            attr.push({
+                sliderID: "lebar",
+                name: "lebar",
+                slideFunction: this.updateHeight(),
+                min: 0,
+                max: canvas.clientHeight - this.y1,
+                value: this.getHeight(),
+            })
+        }
+        return attr;
     }
 
     getCount() {
@@ -59,7 +79,14 @@ export default class Rectangle {
         return this.y1;
     }
 
-    // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
+    getWidth() {
+        return this.width;
+    }
+
+    getHeight() {
+        return this.height;
+    }
+
     setColor({ r, g, b }) {
         return [r,g,b, r,g,b, r,g,b, r,g,b, r,g,b, r,g,b]
     }
@@ -93,6 +120,27 @@ export default class Rectangle {
             self.y1 = newCoor.value;
             self.y2 = newCoor.value + self.height;
         };
+    }
+
+    updateWidth() {
+        let self = this;
+        return function (event, newWidth) {
+            self.width = newWidth.value
+            self.x2 = self.x1 + newWidth.value
+
+            if (self.isSquare) {
+                self.height = newWidth.value
+                self.y2 = self.x1 + newWidth.value
+            }
+        }
+    }
+
+    updateHeight() {
+        let self = this;
+        return function (event, newHeight) {
+            self.height = newHeight.value
+            self.y2 = self.x1 + newHeight.value
+        }
     }
 
     updateCoor({ newX, newY }) {
