@@ -79,6 +79,38 @@ function multiplyMatrices(m1, m2) {
     return result;
 }
 
+function decreaseMatrices(m, x, y) {
+    var result = [];
+    for (var i = 0; i < m.length; i++) {
+        result[i] = [];
+        for (var j = 0; j < m[0].length; j++) {
+            if (j == 0) {
+                result[i][j] = m[i][j] - x;
+            } else if (j == 1) {
+                result[i][j] = m[i][j] - y;
+            }
+            
+        }
+    }
+    return result;
+}
+
+function increaseMatrices(m, x, y) {
+    var result = [];
+    for (var i = 0; i < m.length; i++) {
+        result[i] = [];
+        for (var j = 0; j < m[0].length; j++) {
+            if (j == 0) {
+                result[i][j] = m[i][j] + x;
+            } else if (j == 1) {
+                result[i][j] = m[i][j] + y;
+            }
+            
+        }
+    }
+    return result;
+}
+
 function setupSlider(selector, options) {
     let parent = document.getElementById(selector);
 
@@ -208,6 +240,8 @@ export {
     pixelToClip,
     euclideanDistance,
     multiplyMatrices,
+    decreaseMatrices,
+    increaseMatrices,
     setupSlider,
     getRandomColor,
     convertToJson,
