@@ -1,7 +1,5 @@
 # 2d-web-based-cad
 
-# 2d-web-based-cad
-
 ## Contents
 .  
 ├── src  
