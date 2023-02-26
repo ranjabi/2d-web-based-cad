@@ -9,6 +9,7 @@ export default class Polygon {
     constructor(...vertices) {
         // vertices is array of 2 number
         this.vertices = vertices
+        this.renderedVertices = vertices;
         this.angle = 0;
         this.colors = this.setColor(1,0,0);
         this.deletedCount = 0;
@@ -58,7 +59,7 @@ export default class Polygon {
     }
 
     getPosition() {
-        return this.vertices
+        return this.renderedVertices
     }
 
     getAngle() {
@@ -79,7 +80,7 @@ export default class Polygon {
 
             var m1 = [[cosinus, -(sinus)],
                         [sinus, cosinus]];
-            var m2 = decreaseMatrices(self.getPosition(), self.vertices[0][0], self.vertices[0][1]);
+            var m2 = decreaseMatrices(self.vertices, self.vertices[0][0], self.vertices[0][1]);
 
             var mRes = multiplyMatrices(m2, m1);
             console.log(m1);
@@ -88,7 +89,7 @@ export default class Polygon {
             mRes = increaseMatrices(mRes, self.vertices[0][0], self.vertices[0][1]);
             console.log(mRes);
 
-            self.vertices = mRes;
+            self.renderedVertices = mRes;
             console.log(self.getPosition());
         }
     }
