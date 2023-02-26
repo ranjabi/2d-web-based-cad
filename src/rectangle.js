@@ -24,7 +24,7 @@ export default class Rectangle {
         let attr = [
             {
                 sliderID: "x-position",
-                name: "x",
+                name: "x position",
                 slideFunction: this.updatePositionX(),
                 min: 0,
                 max: canvas.clientWidth - this.width,
