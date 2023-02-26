@@ -194,8 +194,11 @@ function RGBtoHex(r, g, b) {
     let gg = (g * 255).toString(16);
     let bb = (b * 255).toString(16);
     if (rr.length == 1) rr = "0" + rr;
+    if (rr.length > 2) rr = rr.substring(0,2)
     if (gg.length == 1) gg = "0" + gg;
+    if (gg.length > 2) gg = gg.substring(0,2)
     if (bb.length == 1) bb = "0" + bb;
+    if (bb.length > 2) bb = bb.substring(0,2)
     return "#" + rr + gg + bb;
 }
 export {
