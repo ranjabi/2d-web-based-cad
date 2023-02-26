@@ -52,8 +52,6 @@ window.onload = function init() {
                         let poly = new Polygon();
                         poly.colors = read[i].colors;
                         poly.vertices = read[i].vertices;
-                        poly.renderedVertices = read[i].renderedVertices;
-                        poly.angle = read[i].angle
                         // console.log(poly);
                         objects.push(poly);
                         break;
