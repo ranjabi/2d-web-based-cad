@@ -1,6 +1,6 @@
-import Vertice from "./vertice.js";
 import {
     euclideanDistance,
+    multiplyMatrices,
     hextoRGB,
     RGBtoHex,
 } from "./utility.js";
@@ -13,6 +13,7 @@ export default class Line {
         this.x2 = x + length;
         this.y2 = y + length;
         this.length = length;
+        this.angle = 0;
         this.color = this.setColor(color);
         this.type = "line";
     }
@@ -42,6 +43,14 @@ export default class Line {
                 min: 0,
                 max: canvas.clientWidth - this.x1,
                 value: this.getLength(),
+            },
+            {
+                sliderID: "rotasi",
+                name: "rotasi",
+                slideFunction: this.updateAngleRotation(),
+                min: 0,
+                max: 360,
+                value: this.getAngle(),
             }
         ];
     }
@@ -70,6 +79,17 @@ export default class Line {
         return this.length;
     }
 
+    getAngle() {
+        return this.angle;
+    }
+
+    getRotation() {
+        return [
+            this.rotation[0],
+            this.rotation[1]
+        ];
+    }
+
     // TODO: SET OBJECT COLOR FROM CONSTRUCTOR AND CREATE SET FUNCTION TO CHANGE OBJECT COLOR
     setColor({ r, g, b }) {
         return [r,g,b, r,g,b]
@@ -84,6 +104,36 @@ export default class Line {
             [this.x1, this.y1],
             [this.x2, this.y2]
         ];
+    }
+
+    updateAngleRotation() {
+        let self = this;
+        return function (event, newAngle) {
+            self.angle = newAngle;
+            var angleInDegrees = Number(newAngle.value);
+            var angleInRadians = angleInDegrees * (Math.PI / 180);
+            console.log(angleInDegrees);
+            console.log(typeof angleInDegrees);
+            console.log(angleInRadians);
+            var sinus = Math.sin(angleInRadians);
+            var cosinus = Math.cos(angleInRadians);
+            console.log(sinus);
+            console.log(cosinus);
+            var m1 = [[cosinus, sinus],
+                        [-(sinus), cosinus]];
+            var m2 = self.getPosition();
+            var mRes = multiplyMatrices(m2, m1);
+            console.log(m1);
+            console.log(m2);
+            console.log(mRes);
+            // self.updateCoor({newX: mRes[0, 0], newY: mRes[0, 1]});
+            // self.updateCoor({newX: mRes[1, 0], newY: mRes[1, 1]});
+            self.x1 = mRes[0][0];
+            self.y1 = mRes[0][1];
+            self.x2 = mRes[1][0];
+            self.y2 = mRes[1][1];
+            console.log(self.getPosition());
+        }
     }
 
     updatePositionX() {

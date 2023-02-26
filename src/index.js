@@ -294,6 +294,9 @@ window.onload = function init() {
         gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vColor);
 
+        // ROTATION
+        //let rotationLocation = gl.getUniformLocation(program, "u_rotation");
+
         // VERTEX BUFFER
         let vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer); // bind resource to bind point
@@ -322,6 +325,9 @@ window.onload = function init() {
 
         let offset = 0;
         for (let obj of objects) {
+            // Set the rotation.
+            //gl.uniform2fv(rotationLocation, obj.getRotation());
+            
             let primitiveType = obj.getPrimitiveType();
             let count = obj.getCount();
             if (count == 0 && !makingPoligon) {
