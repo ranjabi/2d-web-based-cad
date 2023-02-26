@@ -211,7 +211,12 @@ export default class Line {
         )
     }
     getColorAttr(){
-        let slider = [];
+        let slider = [{
+            id: "all_color",
+            name: "All Vertex Color",
+            slideFunction: this.updateColorAll(),
+            value: RGBtoHex(this.color[ 0], this.color[ 1], this.color[ 2])
+        }];
         for (let i = 0; i < this.getCount(); i++) {
                 slider.push({
                     id: "point_" + i,
@@ -233,5 +238,16 @@ export default class Line {
         };
     }
 
-    
+    updateColorAll(){
+        let self = this
+        return function (event, newColor) {
+            let rgb = hextoRGB(newColor.value)
+            console.log(rgb)
+            for (let i = 0; i < self.getCount(); i++){
+                self.color[i * 3 + 0] = rgb[0]
+                self.color[i * 3 + 1] = rgb[1]
+                self.color[i * 3 + 2] = rgb[2]
+            }
+        }
+    }
 }

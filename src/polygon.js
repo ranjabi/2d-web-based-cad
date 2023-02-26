@@ -88,7 +88,12 @@ export default class Polygon {
         ];
     }
     getColorAttr(){
-        let slider = [];
+        let slider = [{
+            id: "all_color",
+            name: "All Vertex Color",
+            slideFunction: this.updateColorAll(),
+            value: RGBtoHex(this.colors[ 0], this.colors[ 1], this.colors[ 2])
+        }];
         this.indexes = this.setIndexes()
         console.log(this.indexes)
         for (let i = 0; i < this.getCount(); i++) {
@@ -102,6 +107,19 @@ export default class Polygon {
             }
 
         return slider;
+    }
+    updateColorAll(){
+        let self = this
+        return function (event, newColor) {
+            let rgb = hextoRGB(newColor.value)
+            console.log(rgb)
+            for (let i = 0; i < self.getCount(); i++){
+                self.colors[i * 3 + 0] = rgb[0]
+                self.colors[i * 3 + 1] = rgb[1]
+                self.colors[i * 3 + 2] = rgb[2]
+            }
+            console.log(self.colors)
+        }
     }
     updateColor(pointIndex) {
         let self = this;
