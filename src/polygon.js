@@ -1,4 +1,7 @@
 import {
+    multiplyMatrices,
+    decreaseMatrices,
+    increaseMatrices,
     hextoRGB,
     RGBtoHex,
 } from "./utility.js";
@@ -6,6 +9,7 @@ export default class Polygon {
     constructor(...vertices) {
         // vertices is array of 2 number
         this.vertices = vertices
+        this.angle = 0;
         this.colors = this.setColor(1,0,0);
         this.deletedCount = 0;
         this.type = "polygon";
@@ -56,6 +60,40 @@ export default class Polygon {
     getPosition() {
         return this.vertices
     }
+
+    getAngle() {
+        return this.angle;
+    }
+
+    updateAngleRotation() {
+        let self = this;
+        return function (event, newAngle) {
+            self.angle = newAngle;
+            var angleInDegrees = Number(newAngle.value);
+            var angleInRadians = angleInDegrees * (Math.PI / 180);
+            
+            var sinus = Math.sin(angleInRadians);
+            var cosinus = Math.cos(angleInRadians);
+            console.log(sinus);
+            console.log(cosinus);
+
+            var m1 = [[cosinus, -(sinus)],
+                        [sinus, cosinus]];
+            var m2 = decreaseMatrices(self.getPosition(), self.vertices[0][0], self.vertices[0][1]);
+
+            var mRes = multiplyMatrices(m2, m1);
+            console.log(m1);
+            console.log(m2);
+            console.log(mRes);
+            mRes = increaseMatrices(mRes, self.vertices[0][0], self.vertices[0][1]);
+            console.log(mRes);
+
+            self.vertices = mRes;
+            console.log(self.getPosition());
+        }
+    }
+
+
     addVertex(vertex) {
         this.vertices.push(vertex)
         this.addColor(1,0,0)
@@ -84,6 +122,14 @@ export default class Polygon {
                 min: 0,
                 max: canvas.clientHeight ,
                 value: this.getY(),
+            },
+            {
+                sliderID: "rotasi",
+                name: "rotasi",
+                slideFunction: this.updateAngleRotation(),
+                min: 0,
+                max: 360,
+                value: this.getAngle(),
             }
         ];
     }

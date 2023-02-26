@@ -39,20 +39,20 @@ export default class Line {
                 value: this.getY(),
             },
             {
-                sliderID: "panjang",
-                name: "panjang",
-                slideFunction: this.updateLength(),
-                min: 0,
-                max: canvas.clientWidth - this.x1,
-                value: this.getLength(),
-            },
-            {
                 sliderID: "rotasi",
                 name: "rotasi",
                 slideFunction: this.updateAngleRotation(),
                 min: 0,
                 max: 360,
                 value: this.getAngle(),
+            },
+            {
+                sliderID: "panjang",
+                name: "panjang",
+                slideFunction: this.updateLength(),
+                min: 0,
+                max: canvas.clientWidth - this.x1,
+                value: this.getLength(),
             }
         ];
     }
