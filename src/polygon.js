@@ -65,6 +65,10 @@ export default class Polygon {
         return this.angle;
     }
 
+    rotationAnim(theta) {
+        this.updateAngleRotation()(null, {value: theta})
+    }
+
     updateAngleRotation() {
         let self = this;
         return function (event, newAngle) {
@@ -74,22 +78,16 @@ export default class Polygon {
             
             var sinus = Math.sin(angleInRadians);
             var cosinus = Math.cos(angleInRadians);
-            console.log(sinus);
-            console.log(cosinus);
 
             var m1 = [[cosinus, -(sinus)],
                         [sinus, cosinus]];
             var m2 = decreaseMatrices(self.getPosition(), self.vertices[0][0], self.vertices[0][1]);
 
             var mRes = multiplyMatrices(m2, m1);
-            console.log(m1);
-            console.log(m2);
-            console.log(mRes);
+
             mRes = increaseMatrices(mRes, self.vertices[0][0], self.vertices[0][1]);
-            console.log(mRes);
 
             self.vertices = mRes;
-            console.log(self.getPosition());
         }
     }
 

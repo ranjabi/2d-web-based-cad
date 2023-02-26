@@ -39,6 +39,14 @@ export default class Rectangle {
                 value: this.getY(),
             },
             {
+                sliderID: "dilatasi",
+                name: "dilatasi",
+                slideFunction: this.updatePositionY(),
+                min: 0,
+                max: canvas.clientHeight - this.height,
+                value: this.getY(),
+            },
+            {
                 sliderID: "panjang",
                 name: "panjang",
                 slideFunction: this.updateWidth(),

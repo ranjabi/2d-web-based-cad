@@ -22,6 +22,8 @@ window.onload = function init() {
     let makingPoligon = false;
     let selectedPoligon = null;
     let addingPointtoPolygon = false;
+    let theta = 1;
+    let isObjectRotate = false;
     let canvas = document.querySelector("#canvas");
     let lineBtn = document.getElementById("line-btn");
     let squareBtn = document.getElementById("square-btn");
@@ -33,6 +35,8 @@ window.onload = function init() {
     let savefile = document.getElementById("savefile");
     let addPointbutton = document.getElementById("add-point-polygon-btn");
     let stopAddPointbutton = document.getElementById("stop-add-polygon-btn");
+    let rotateAnimbutton = document.getElementById("rotate-anim-btn");
+    let stopRotateAnimbutton = document.getElementById("stop-rotate-anim-btn");
 
     let file = null;
     fileinput.addEventListener("change", (event) => {
@@ -136,8 +140,12 @@ window.onload = function init() {
 
             if (closestObject.type == 'polygon'){
                 addPointbutton.classList.remove("hidden")  
+                rotateAnimbutton.classList.remove("hidden")
             }
             else {
+                if (closestObject.type == 'line'){
+                    rotateAnimbutton.classList.remove("hidden")
+                }
                 addPointbutton.classList.add("hidden")
             }
             for (let attr of colorAttr) {
@@ -226,6 +234,17 @@ window.onload = function init() {
         selectedPoligon = null
         stopAddPointbutton.classList.add("hidden")
     })
+
+    rotateAnimbutton.addEventListener("click", (event) => {
+        isObjectRotate = true
+        stopRotateAnimbutton.classList.remove("hidden")
+    })
+
+    stopRotateAnimbutton.addEventListener("click", (event) => {
+        isObjectRotate = false
+        stopRotateAnimbutton.classList.add("hidden")
+    })
+
     // WebGLRenderingContext
     let gl = canvas.getContext("webgl");
     if (!gl) {
@@ -295,9 +314,6 @@ window.onload = function init() {
         gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vColor);
 
-        // ROTATION
-        //let rotationLocation = gl.getUniformLocation(program, "u_rotation");
-
         // VERTEX BUFFER
         let vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer); // bind resource to bind point
@@ -326,9 +342,11 @@ window.onload = function init() {
 
         let offset = 0;
         for (let obj of objects) {
-            // Set the rotation.
-            //gl.uniform2fv(rotationLocation, obj.getRotation());
-            
+
+            if ((obj.type == 'line' || obj.type == 'polygon') && isObjectRotate) {
+                obj.rotationAnim(theta);
+            }
+
             let primitiveType = obj.getPrimitiveType();
             let count = obj.getCount();
             if (count == 0 && !makingPoligon) {

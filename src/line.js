@@ -102,6 +102,10 @@ export default class Line {
         ];
     }
 
+    rotationAnim(theta) {
+        this.updateAngleRotation()(null, {value: theta})
+    }
+
     updateAngleRotation() {
         let self = this;
         return function (event, newAngle) {
@@ -111,25 +115,19 @@ export default class Line {
             
             var sinus = Math.sin(angleInRadians);
             var cosinus = Math.cos(angleInRadians);
-            console.log(sinus);
-            console.log(cosinus);
 
             var m1 = [[cosinus, -(sinus)],
                         [sinus, cosinus]];
             var m2 = decreaseMatrices(self.getPosition(), self.getX(), self.getY()) ;
 
             var mRes = multiplyMatrices(m2, m1);
-            console.log(m1);
-            console.log(m2);
-            console.log(mRes);
+
             mRes = increaseMatrices(mRes, self.getX(), self.getY());
-            console.log(mRes);
 
             self.x1 = mRes[0][0];
             self.y1 = mRes[0][1];
             self.x2 = mRes[1][0];
             self.y2 = mRes[1][1];
-            console.log(self.getPosition());
         }
     }
 
