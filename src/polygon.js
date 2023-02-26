@@ -69,7 +69,7 @@ export default class Polygon {
     updateAngleRotation() {
         let self = this;
         return function (event, newAngle) {
-            self.angle = newAngle;
+            self.angle = newAngle.value;
             var angleInDegrees = Number(newAngle.value);
             var angleInRadians = angleInDegrees * (Math.PI / 180);
             
